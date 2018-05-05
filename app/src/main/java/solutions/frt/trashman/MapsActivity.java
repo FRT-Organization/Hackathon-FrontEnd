@@ -2,6 +2,7 @@ package solutions.frt.trashman;
 
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -10,14 +11,53 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import solutions.frt.trashman.Models.Village;
+import solutions.frt.trashman.Services.VillageClient;
+
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+    public static final String BASE_URL = "http://83.212.108.171:8080/";
     private GoogleMap mMap;
+    List<Village> repos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        Retrofit.Builder builder = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create());
+
+        Retrofit retrofit = builder.build();
+
+        VillageClient client = retrofit.create(VillageClient.class);
+        Call<List<Village>> call = client.fetchVillages();
+
+        call.enqueue(new Callback<List<Village>>() {
+            @Override
+            public void onResponse(Call<List<Village>> call, Response<List<Village>> response) {
+                repos = response.body();
+
+                for (int i = 0; i < repos.size(); i++) {
+                    LatLng village = new LatLng(Double.parseDouble(repos.get(i).getLatitude()), Double.parseDouble(repos.get(i).getLongitude()));
+                    mMap.addMarker(new MarkerOptions().position(village).title(repos.get(i).getName()));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(village));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Village>> call, Throwable t) {
+                Toast.makeText(MapsActivity.this, "Could not retrieve villages.", Toast.LENGTH_LONG);
+            }
+        });
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -38,9 +78,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 }
