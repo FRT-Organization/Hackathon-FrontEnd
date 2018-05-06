@@ -13,6 +13,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -27,6 +28,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public static final String BASE_URL = "http://83.212.108.171:8080/";
     private GoogleMap mMap;
     List<Village> repos;
+    List<LatLng> listLatLong = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,21 +51,46 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 //Place markers on the map
                 for (int i = 0; i < repos.size(); i++) {
-                    LatLng village = new LatLng(Double.parseDouble(repos.get(i).getLatitude()), Double.parseDouble(repos.get(i).getLongitude()));
-                    mMap.addMarker(new MarkerOptions().position(village).title(repos.get(i).getName()));
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(village));
 
-                    //Draw graph
-                    if (i>0) {
-                        mMap.addPolyline(new PolylineOptions()
-                                .add(village, new LatLng(Double.parseDouble(repos.get(i - 1).getLatitude()), Double.parseDouble(repos.get(i - 1).getLongitude())))
-                                .width(5)
-                                .color(Color.BLACK));
+                    LatLng village = new LatLng(Double.parseDouble(repos.get(i).getLatitude()), Double.parseDouble(repos.get(i).getLongitude()));
+                    listLatLong.add(village);
+                    mMap.addMarker(new MarkerOptions().position(village).title(repos.get(i).getName()));
+                    if (i == 0) {
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(village, 10));
                     }
                 }
 
+                PolylineOptions polylineOptions1 = new PolylineOptions().add(listLatLong.get(0)).add(listLatLong.get(1));
+                PolylineOptions polylineOptions2 = new PolylineOptions().add(listLatLong.get(0)).add(listLatLong.get(4));
+                PolylineOptions polylineOptions3 = new PolylineOptions().add(listLatLong.get(1)).add(listLatLong.get(2));
+                PolylineOptions polylineOptions4 = new PolylineOptions().add(listLatLong.get(4)).add(listLatLong.get(2));
+                PolylineOptions polylineOptions5 = new PolylineOptions().add(listLatLong.get(4)).add(listLatLong.get(3));
+                PolylineOptions polylineOptions6 = new PolylineOptions().add(listLatLong.get(4)).add(listLatLong.get(5));
+                PolylineOptions polylineOptions7 = new PolylineOptions().add(listLatLong.get(6)).add(listLatLong.get(3));
+                PolylineOptions polylineOptions8 = new PolylineOptions().add(listLatLong.get(6)).add(listLatLong.get(8));
+                PolylineOptions polylineOptions9 = new PolylineOptions().add(listLatLong.get(6)).add(listLatLong.get(9));
+                PolylineOptions polylineOptions10 = new PolylineOptions().add(listLatLong.get(2)).add(listLatLong.get(5));
+                PolylineOptions polylineOptions11 = new PolylineOptions().add(listLatLong.get(3)).add(listLatLong.get(5));
+                PolylineOptions polylineOptions12 = new PolylineOptions().add(listLatLong.get(5)).add(listLatLong.get(7));
+                PolylineOptions polylineOptions13 = new PolylineOptions().add(listLatLong.get(9)).add(listLatLong.get(7));
+                PolylineOptions polylineOptions14 = new PolylineOptions().add(listLatLong.get(9)).add(listLatLong.get(8));
+                PolylineOptions polylineOptions15 = new PolylineOptions().add(listLatLong.get(0)).add(listLatLong.get(6));
 
-
+                mMap.addPolyline(polylineOptions1);
+                mMap.addPolyline(polylineOptions2);
+                mMap.addPolyline(polylineOptions3);
+                mMap.addPolyline(polylineOptions4);
+                mMap.addPolyline(polylineOptions5);
+                mMap.addPolyline(polylineOptions6);
+                mMap.addPolyline(polylineOptions7);
+                mMap.addPolyline(polylineOptions8);
+                mMap.addPolyline(polylineOptions9);
+                mMap.addPolyline(polylineOptions10);
+                mMap.addPolyline(polylineOptions11);
+                mMap.addPolyline(polylineOptions12);
+                mMap.addPolyline(polylineOptions13);
+                mMap.addPolyline(polylineOptions14);
+                mMap.addPolyline(polylineOptions15);
             }
 
             @Override
