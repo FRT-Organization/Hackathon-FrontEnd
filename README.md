@@ -1,5 +1,3 @@
-# Hackathon-FrontEnd
-
 # Trashman
 
 This project was developed for "Hackathon 2018: Data in Action" that was placed in Serres on the 5th and 6th of May. The whole project includes two parts. A front-end, built with Android and a back-end build with Spring boot. This repository includes the front-end. It helps rubbish lorries to pick up the rubbish by calculating the fastest route available. 
