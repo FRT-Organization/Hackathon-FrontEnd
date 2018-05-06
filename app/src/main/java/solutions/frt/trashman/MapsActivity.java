@@ -1,5 +1,6 @@
 package solutions.frt.trashman;
 
+import android.graphics.Color;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -10,6 +11,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.List;
 
@@ -45,11 +47,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onResponse(Call<List<Village>> call, Response<List<Village>> response) {
                 repos = response.body();
 
+                //Place markers on the map
                 for (int i = 0; i < repos.size(); i++) {
                     LatLng village = new LatLng(Double.parseDouble(repos.get(i).getLatitude()), Double.parseDouble(repos.get(i).getLongitude()));
                     mMap.addMarker(new MarkerOptions().position(village).title(repos.get(i).getName()));
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(village));
+
+                    //Draw graph
+                    if (i>0) {
+                        mMap.addPolyline(new PolylineOptions()
+                                .add(village, new LatLng(Double.parseDouble(repos.get(i - 1).getLatitude()), Double.parseDouble(repos.get(i - 1).getLongitude())))
+                                .width(5)
+                                .color(Color.BLACK));
+                    }
                 }
+
+
+
             }
 
             @Override
@@ -64,7 +78,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
     }
 
-
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -77,6 +90,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
     }
 }
